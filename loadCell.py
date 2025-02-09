@@ -38,6 +38,7 @@ import RPi.GPIO as GPIO
 import time
 import sys
 from hx711 import HX711
+import logger_csv as l
 
 # Force Python 3 ###########################################################
 
@@ -70,6 +71,8 @@ def setup():
         if (GPIO.input(hx.DOUT) == 1):
             print("Initialization complete!")
             scale_ready = True
+    global logger 
+    logger = l.Logger()
 
 
 def calibrate():
@@ -107,6 +110,8 @@ def loop():
                 calibrate()
             elif choice == "2":
                 print("\nOffset: {}\nScale: {}".format(hx.get_offset(), hx.get_scale()))
+                logger.collect_data(val)
+                logger.print_data()
             elif choice == "0":
                 prompt_handled = True
                 cleanAndExit()

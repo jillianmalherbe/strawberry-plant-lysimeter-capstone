@@ -109,7 +109,7 @@ class HX711:
         # Control if the chip is ready
         while not (GPIO.input(self.DOUT) == 0):
             # Uncommenting the print below results in noisy output
-            print("No input from HX711.")
+            #print("No input from HX711.")
             pass
 
         # Original C source code ported to Python as described in datasheet
