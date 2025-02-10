@@ -1,10 +1,10 @@
 import smbus2
 import time
 
-class leafIR:
+class Pressure:
     #Can print the temperature and pressure
     
-    # constructor for the leafIR class
+    # constructor for the pressure class
     def __init__(self):
         # I2C addresses for BMP280 and SHT40
         self.BMP280_I2C_ADDR = 0x76  # Default address for BMP280
