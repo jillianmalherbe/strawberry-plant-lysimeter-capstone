@@ -71,7 +71,6 @@ class HX711:
         GPIO.output(self.PD_SCK, False)
         
         self.read()
-        print("working3")
 
     def set_scale(self, scale):
         """
