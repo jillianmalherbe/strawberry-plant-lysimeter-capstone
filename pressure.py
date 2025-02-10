@@ -9,7 +9,7 @@ class Pressure:
         # I2C addresses for BMP280 and SHT40
         self.BMP280_I2C_ADDR = 0x76  # Default address for BMP280
         self.bus = smbus2.SMBus(1)  # Use 1 for Raspberry Pi I2C bus
-
+        
     # gets the temperature and pressure
     def get_temp_and_pressure(self):
         # Configuration registers (oversampling, mode)
@@ -59,3 +59,6 @@ class Pressure:
             
         return temperature / 100.0, pressure / 256.0
 
+    def final(self):
+        self.bus.close()
+        

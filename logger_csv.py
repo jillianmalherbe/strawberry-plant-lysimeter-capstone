@@ -1,11 +1,10 @@
 import csv
-#import psutil as ps---------
 from datetime import datetime
 from time import sleep
 
 class Logger:
-    def __init__(self):
-        self.data_dict = {}
+        def __init__(self):
+                self.data_dict = {}
 
     def collect_data(self, mass):
         ''' collect data and assign to class variable '''

@@ -28,7 +28,7 @@ class loadCell:
     def __init__(self):
         # Make sure you correct these to the correct pins for DOUT and SCK.
         # gain is set to 128 as default, change as needed.
-        self.hx = HX711(2, 3, 128)
+        self.hx = HX711(9, 10, 128)
         self.setup()  
 
     def setup(self):

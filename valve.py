@@ -23,11 +23,11 @@ try:
     while True:
         # Turn the relay ON (HIGH) to turn on the water valve
         GPIO.output(RELAY_PIN, GPIO.HIGH)
-        time.sleep(5)  # Wait for 5 seconds
+        time.sleep(20)  # Wait for 5 seconds
 
         # Turn the relay OFF (LOW) to turn off the water valve
         GPIO.output(RELAY_PIN, GPIO.LOW)
-        time.sleep(5)  # Wait for 5 seconds
+        time.sleep(20)  # Wait for 5 seconds
 
 except KeyboardInterrupt:
     # If the user presses Ctrl+C, clean up the GPIO configuration
