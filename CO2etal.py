@@ -7,7 +7,6 @@ class CO2:
 	# constructor for the co2 class
 	def __init__(self):
 		self.scd = adafruit_scd30.SCD30(board.I2C())
-		print(self.scd)
 
 	# gets if the data is available to read
 	def get_data_available(self):
