@@ -60,7 +60,7 @@ def read_bmp280_temp_and_pressure():
 
 
 # SHT40 Functions
-def read_sht40_temp_and_humidity():
+'''def read_sht40_temp_and_humidity():
     # Send measurement command (high repeatability)
     bus.write_i2c_block_data(SHT40_I2C_ADDR, 0xFD, [])
     time.sleep(0.01)  # Wait for measurement
@@ -76,7 +76,7 @@ def read_sht40_temp_and_humidity():
     hum_raw = (data[3] << 8) | data[4]
     humidity = 100 * (hum_raw / 65535.0)
 
-    return temperature, humidity
+    return temperature, humidity'''
 
 
 # Main loop
@@ -86,11 +86,11 @@ try:
         bmp_temp, pressure = read_bmp280_temp_and_pressure()
 
         # Read data from SHT40
-        sht_temp, humidity = read_sht40_temp_and_humidity()
+        # sht_temp, humidity = read_sht40_temp_and_humidity()
 
         # Print results
         print(f"BMP280 -> Temperature: {bmp_temp:.2f}°C, Pressure: {pressure:.2f} Pa")
-        print(f"SHT40 -> Temperature: {sht_temp:.2f}°C, Humidity: {humidity:.2f}%")
+        # print(f"SHT40 -> Temperature: {sht_temp:.2f}°C, Humidity: {humidity:.2f}%")
         print("-" * 40)
 
         time.sleep(1)  # Delay between readings
