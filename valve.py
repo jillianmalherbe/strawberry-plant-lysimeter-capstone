@@ -9,26 +9,29 @@ https://newbiely.com/tutorials/raspberry-pi/raspberry-pi-water-liquid-valve
 import RPi.GPIO as GPIO
 import time
 
-# Set the GPIO mode (BCM or BOARD)
-GPIO.setmode(GPIO.BCM)
+class Valve:
+    #Can turn the valve on and off
+    valve_on=False
+    
+    # constructor
+    def __init__(self):
+        # Set the GPIO mode (BCM or BOARD)
+        GPIO.setmode(GPIO.BCM)
+        # Define the GPIO pin controls the water valve via the relay module
+        self.RELAY_PIN = 12
+        # Set the relay pin as an output pin
+        GPIO.setup(self.RELAY_PIN, GPIO.OUT)
 
-# Define the GPIO pin controls the water valve via the relay module
-RELAY_PIN = 12
-
-# Set the relay pin as an output pin
-GPIO.setup(RELAY_PIN, GPIO.OUT)
-
-try:
-    # Run the loop function indefinitely
-    while True:
+    def turn_off(self):
         # Turn the relay ON (HIGH) to turn on the water valve
-        GPIO.output(RELAY_PIN, GPIO.HIGH)
-        time.sleep(20)  # Wait for 5 seconds
-
+        GPIO.output(self.RELAY_PIN, GPIO.HIGH)
+        self.valve_on=False
+    
+    def turn_on(self):
         # Turn the relay OFF (LOW) to turn off the water valve
-        GPIO.output(RELAY_PIN, GPIO.LOW)
-        time.sleep(20)  # Wait for 5 seconds
+        GPIO.output(self.RELAY_PIN, GPIO.LOW)
+        self.valve_on=True
+        
+    def is_on(self):
+        return self.valve_on
 
-except KeyboardInterrupt:
-    # If the user presses Ctrl+C, clean up the GPIO configuration
-    GPIO.cleanup()

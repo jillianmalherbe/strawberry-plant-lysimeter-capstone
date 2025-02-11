@@ -3,49 +3,103 @@ import soilMoisture as moist
 import leafIR as ir
 import pressure as pres
 import loadCell as load
+import valve as v
+import logger_csv as l
+import time
+from datetime import datetime
 
-# for the load cell
+# this stores the current time
+global curr_time
+curr_time=time.time()
+
+# calibrate the load cell
 load_cell = load.loadCell()
 load_cell.calibrate()
-print("Item weighs {} grams.\n".format(load_cell.get_mass()))
+
+# strores the logger information
+logger = l.Logger()
+
 print("\nOffset: {}\nScale: {}".format(load_cell.get_offset(), load_cell.get_scale()))       
-
-
-# for the co2 sensor
-# create a co2 class
-co2_sensor = co2.CO2()
-
-# print the c02 data
-print("Data available?", co2_sensor.get_data_available())
-print("CO2:", co2_sensor.get_co2(), "PPM")
-print("Temperature:", co2_sensor.get_temp(), "degrees C")
-print("Humidity:", co2_sensor.get_humid(), "%%rH")
-
-
-# for the soil moisture sensor
-moist_sensor = moist.soilMoisture()
-print("temp: " + str(moist_sensor.get_temp()))
-print("moisture: " + str(moist_sensor.get_moist()))
-
-# Read data for pressure sensor
-pres_sensor = pres.Pressure()
-bmp_temp, pressure = pres_sensor.get_temp_and_pressure()
-
-# Print results
-print(f"Temperature: {bmp_temp:.2f}°C, Pressure: {pressure:.2f} Pa")
-
-# Read data for leaf ir sensor
-ir_sensor = ir.leafIR()
-ambient_temp = ir_sensor.get_ambient_temp()
-object_temp = ir_sensor.get_object_temp()
-
-print(f"Ambient Temperature: {ambient_temp:.2f} °C")
-print(f"Object Temperature: {object_temp:.2f} °C")
-
 print("Item weighs {} grams.\n".format(load_cell.get_mass()))
-print("\nOffset: {}\nScale: {}".format(load_cell.get_offset(), load_cell.get_scale()))  
-'''
-#finish this at the end!!
-#ir_sensor.final()
-'''
+		
+# check if 24 hours have elapsed then turn the valve on
+def check_turn_on():
+	global curr_time
+	if not(valve.is_on()) and curr_time-time.time()/3600 <= -24:
+		curr_time=time.time()
+		valve.turn_on()
+	
+	# turns the valve off if it has been more than 10 minutes
+	if valve.is_on() and curr_time-time.time() <= -600:
+		valve.turn_off()
+		
+			
+# loop through and print information in the csv file
+# create all sensors classes
+co2_sensor = co2.CO2()
+moist_sensor = moist.soilMoisture()
+pres_sensor = pres.Pressure()
+ir_sensor = ir.leafIR()
+valve = v.Valve()
+valve.turn_off()
 
+# Run the loop function indefinitely to print the sensor information in the csv file
+while True:
+
+	# get the c02 data
+	print("Data available?", co2_sensor.get_data_available())
+	co2_value=co2_sensor.get_co2()
+	print("CO2:", co2_value, "PPM")
+	co2_temp=co2_sensor.get_temp()
+	print("Temperature:", co2_temp, "degrees C")
+	co2_humid=co2_sensor.get_humid()
+	print("Humidity:", co2_humid, "%%rH")
+
+
+	# for the soil moisture sensor
+	soil_temp=str(moist_sensor.get_temp())
+	print("temp: " + soil_temp)
+	soil_moist=str(moist_sensor.get_moist())
+	print("moisture: " + soil_moist)
+
+	# Read data for pressure sensor
+	bmp_temp, pressure = pres_sensor.get_temp_and_pressure()
+	bmp_temp="{text:.2f}".format(text=bmp_temp)
+	pressure="{text:.2f}".format(text=pressure)
+	
+	# Print results
+	print("Temperature: ", bmp_temp, "°C, Pressure: ",pressure," Pa")
+
+	# Read data for leaf ir sensor
+	ambient_temp = ir_sensor.get_ambient_temp()
+	object_temp = ir_sensor.get_object_temp()
+
+	ambient_temp = "{text:.2f}".format(text=ambient_temp)
+	object_temp = "{text:.2f}".format(text=object_temp)
+	
+	print("Ambient Temperature: ",ambient_temp," °C")
+	print("Object Temperature: ",object_temp," °C")
+
+	mass="{}".format(load_cell.get_mass())
+	
+	print("Item weighs ",mass," grams.\n")
+	
+	# add all the variables to the logger
+	logger.collect_data("Date", datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
+	logger.collect_data("Co2 (PPM)", co2_value)
+	logger.collect_data("Co2_temp (°C)", co2_temp)
+	logger.collect_data("Co2_humid (%%rH)", co2_humid)
+	logger.collect_data("Soil_temp (°C)", soil_temp)
+	logger.collect_data("Soil_moist", soil_moist)
+	logger.collect_data("Bmp_temp (°C)", bmp_temp)
+	logger.collect_data("Pressure (Pa)", pressure)
+	logger.collect_data("Ambient_temp (°C)", ambient_temp)
+	logger.collect_data("Object_temp (°C)", object_temp)
+	logger.collect_data("Mass", mass)
+	logger.log_data_csv()
+	
+	time.sleep(5)  # Wait for 5 seconds
+	logger.add_server()
+	# check if 24 hours have elapsed then turn the valve on (also turn off if needed)
+	check_turn_on()
+		

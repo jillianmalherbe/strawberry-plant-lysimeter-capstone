@@ -19,7 +19,6 @@ import RPi.GPIO as GPIO
 import time
 import sys
 from hx711 import HX711
-#import logger_csv as l
 
 class loadCell:
     #Can print the mass and calibrate the load cell

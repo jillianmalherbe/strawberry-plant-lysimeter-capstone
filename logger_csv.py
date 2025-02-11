@@ -1,25 +1,50 @@
 import csv
 from datetime import datetime
 from time import sleep
+import os.path
+import boto3
 
 class Logger:
-        def __init__(self):
-                self.data_dict = {}
-
-    def collect_data(self, mass):
-        ''' collect data and assign to class variable '''
-        self.data_dict['mass'] = (datetime.now(), mass)
-
-    def print_data(self):
-        ''' print select data in nicely formatted string '''
-        print("-"*120)
-        print("~~ {0:%Y-%m-%d, %H:%M:%S} ~~".format(*self.data_dict['mass']))
-        #print("CPU TIME // User: {1:,.0f}, System: {3:,.0f}, Idle: {4:,.0f}".format(*self.data_dict['mass']))
-        #print("VIRT MEM // Total: {1:,d}, Available: {2:,d}".format(*self.data_dict['vmemory']))
-
-   def log_data(self):
-        ''' log the data into csv files '''
-        for file, data in self.data_dict.items():
-            with open('data/' + file + '.csv', 'a+', newline='') as f:
-                writer = csv.writer(f)
-                writer.writerow(data)
+	# constructor
+	def __init__(self):
+		self.headerList=[]
+		self.rowList=[]
+		self.file_name = "/home/leaf/strawberry-plant-lysimeter-capstone/sensor_data.csv"
+		self.bucket_name = "strawberry-lysimeter-data"
+	
+	# collect the data into the dictionary
+	def collect_data(self, name, variable):
+		''' collect data and assign to class variable '''
+		self.headerList.append(name)
+		self.rowList.append(variable)
+        
+	def log_data_csv(self):
+		''' log the data into csv files '''		
+		if os.path.isfile(self.file_name):
+			with open(self.file_name, 'a+', newline='') as f:
+				writer = csv.writer(f)
+				writer.writerow(self.rowList)
+		else:
+			with open(self.file_name, mode='w', newline='') as f:
+				writer = csv.writer(f)
+				writer.writerow(self.headerList)
+				writer.writerow(self.rowList)
+				
+		self.headerList=[]
+		self.rowList=[]
+	
+	# add the csv file into the aws server
+	def add_server(self):
+		s3 = boto3.client('s3')
+		s3.upload_file(self.file_name, self.bucket_name, "sensor_data.csv")
+		print(f"Uploaded {self.file_name} to {self.bucket_name}")
+		
+	'''
+	# the file names are named per day
+	def get_file_name(self):
+		file_name = self.file_name.split('.')
+		file_name = file_name[0] + "{:%B_%d_%Y}".format(datetime.now()) "." + file_name[1]
+		
+		return file_name
+	'''
+	
