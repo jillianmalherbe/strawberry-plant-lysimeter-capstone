@@ -18,7 +18,7 @@ class Valve:
         # Set the GPIO mode (BCM or BOARD)
         GPIO.setmode(GPIO.BCM)
         # Define the GPIO pin controls the water valve via the relay module
-        self.RELAY_PIN = 12
+        self.RELAY_PIN = 24
         # Set the relay pin as an output pin
         GPIO.setup(self.RELAY_PIN, GPIO.OUT)
 

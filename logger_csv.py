@@ -36,7 +36,7 @@ class Logger:
 	# add the csv file into the aws server
 	def add_server(self):
 		s3 = boto3.client('s3')
-		s3.upload_file(self.file_name, self.bucket_name, "sensor_data.csv")
+		s3.upload_file(self.file_name, self.bucket_name, "sensor_data_showcase.csv")
 		print(f"Uploaded {self.file_name} to {self.bucket_name}")
 		
 	'''

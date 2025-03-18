@@ -25,12 +25,14 @@ print("Item weighs {} grams.\n".format(load_cell.get_mass()))
 # check if 24 hours have elapsed then turn the valve on
 def check_turn_on():
 	global curr_time
-	if not(valve.is_on()) and curr_time-time.time()/3600 <= -24:
+	#if not(valve.is_on()) and curr_time-time.time()/3600 <= -24:
+	if not(valve.is_on()) and curr_time-time.time() <= -45:
 		curr_time=time.time()
 		valve.turn_on()
 	
-	# turns the valve off if it has been more than 10 minutes
-	if valve.is_on() and curr_time-time.time() <= -600:
+	# turns the valve off if it has been more than 15 minutes
+	#if valve.is_on() and curr_time-time.time() <= -1800:
+	if valve.is_on() and curr_time-time.time() <= -15:
 		valve.turn_off()
 		
 			
@@ -98,8 +100,9 @@ while True:
 	logger.collect_data("Mass", mass)
 	logger.log_data_csv()
 	
-	time.sleep(5)  # Wait for 5 seconds
+	time.sleep(5)
 	logger.add_server()
+
 	# check if 24 hours have elapsed then turn the valve on (also turn off if needed)
 	check_turn_on()
 		
